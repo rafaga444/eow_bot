@@ -79,4 +79,4 @@ player = Move()
 
 #print(pm.read_int(player_mn))
 
-print(pm.read_int(player_x), pm.read_int(player_y))
+pm.read_bytes(0xf99f1c0, 1100600)

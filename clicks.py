@@ -28,7 +28,8 @@ def Click1(x, y):
 
 
 def leftClick(x, y):
-    hWnd = win32gui.FindWindow(None, "Shadow Worlds")
+    #hWnd = win32gui.FindWindow(None, "Shadow Worlds")
+    hWnd = win32gui.Fin(None, "Shadow Worlds")
     lParam = win32api.MAKELONG(x, y)
 
     win32gui.PostMessage(hWnd, win32con.WM_MOUSEMOVE, 0, lParam)
@@ -80,4 +81,17 @@ def leftclick(x, y, delay=1):
     time.sleep(delay)
 
 
-leftclick(222,222)
+def double_left(x , y):
+    hwndWindowTarget = win32gui.FindWindow("TForm1", "SW")
+    lParam = win32api.MAKELONG(x, y)
+
+    win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONDBLCLK, 1, lParam)
+
+
+def escape():
+    hwndWindowTarget = win32gui.FindWindow("TForm1", "SW")
+    #lParam = win32api.MAKELONG(x, y)
+
+    win32gui.PostMessage(hwndWindowTarget, win32con.WM_KEYDOWN, win32con.VK_ESCAPE, 1)
+
+
