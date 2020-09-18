@@ -4,6 +4,7 @@ import win32con
 import time
 import pyautogui
 import keyboard
+from clicks import escape
 
 hwnd = win32gui.FindWindow("TForm1", "SW")
 hwndscr = win32gui.FindWindow(None, 'Shadow Worlds')
@@ -33,29 +34,17 @@ def click_on_pic(picture, confidence=0.6):
             click_x = point.x - x
             click_y = point.y - y
             print(click_x, click_y)
-            leftclick(click_x, click_y, delay=0)
+            leftclick(click_x, click_y, delay=0.02)
         else:
             print(f'cannot find the picture: {picture}')
     except AttributeError:
         print("none")
 
-#
-# while not keyboard.is_pressed('q'):
-#     click_on_pic('tanchik.png')
 
-# rect = win32gui.GetWindowRect(hwndscr)
-# x = rect[0]
-# y = rect[1]
-# w = rect[2] - x
-# h = rect[3] - y
-# pic = pyautogui.screenshot(region=(x, y, w, h))
-
-# picclick = pyautogui.locateOnScreen('ghosty.png', region=(x,y,w,h), grayscale=True, confidence=0.6)
-# point = pyautogui.center(picclick)
-# click_x = point.x - x
-# click_y = point.y - y
-# leftclick(click_x, click_y)
 while True:
     if keyboard.is_pressed('q'):
         while not keyboard.is_pressed('q'):
             click_on_pic('rafaga.png')
+            if keyboard.is_pressed('esc'):
+                escape()
+

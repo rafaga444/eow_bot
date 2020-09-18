@@ -3,32 +3,32 @@ from clicks import leftclick
 
 
 def go_up():
-    leftclick(215, 180)
+    leftclick(210, 191)
 
 
 def go_left_up():
-    leftclick(183, 181)
+    leftclick(199, 196)
 
 
 def go_right_up():
-    leftclick(237, 180)
+    leftclick(220, 195)
 
 
 def go_left_down():
-    leftclick(183, 237)
+    leftclick(199, 236)
 
 
 def go_right_down():
-    leftclick(237, 237)
+    leftclick(223, 232)
 
 
 def go_left():
-    leftclick(172, 212)
+    leftclick(188, 214)
 
 
 def go_right():
-    leftclick(240, 213)
+    leftclick(228, 213)
 
 
 def go_down():
-    leftclick(210, 241)
+    leftclick(210, 236)
