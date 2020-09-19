@@ -81,13 +81,12 @@ def find_pickaxe():
             pickaxe_slot = cell_num
             if pickaxe_slot < current_first_bag_slot:
                 clicks_count = current_first_bag_slot - pickaxe_slot
-                leftclick(460, 230,delay=0, amount=clicks_count)
+                leftclick(460, 230, delay=0, amount=clicks_count)
             elif pickaxe_slot > current_first_bag_slot:
                 clicks_count = pickaxe_slot - current_first_bag_slot
-                leftclick(599, 231,delay=0, amount=clicks_count)
+                leftclick(599, 231, delay=0, amount=clicks_count)
             else:
                 print('found')
-
 
 
 find_pickaxe()

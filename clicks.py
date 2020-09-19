@@ -18,6 +18,13 @@ def leftclick(x, y, delay=0.03, amount=1):
         win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONUP, 1, lParam)
         time.sleep(delay)
 
+def rightclick(x, y, delay=0.03, amount=1):
+    hwndWindowTarget = win32gui.FindWindow("TForm1", "SW")
+    lParam = win32api.MAKELONG(x, y)
+    for i in range(amount):
+        win32gui.PostMessage(hwndWindowTarget, win32con.WM_RBUTTONDOWN, 1, lParam)
+        win32gui.PostMessage(hwndWindowTarget, win32con.WM_RBUTTONUP, 1, lParam)
+        time.sleep(delay)
 
 def double_left(x, y):
     hwndWindowTarget = win32gui.FindWindow("TForm1", "SW")
@@ -42,3 +49,5 @@ def shiftclick(x, y, delay=0.3):
     win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONDOWN, win32con.MK_SHIFT, lParam)
     win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONUP, win32con.MK_SHIFT, lParam)
     time.sleep(delay)
+
+
