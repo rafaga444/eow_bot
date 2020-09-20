@@ -6,7 +6,7 @@ from clicks import double_left, escape, rightclick
 
 pm = pymem.Pymem('mudclient.exe')
 
-# cell coordinates, item_id, quantity
+# cell           coordinates, item_id, quantity
 drop_field = {0: ((200, 240), 0x555654, 0x55574C),
               1: ((241, 240), 0x5557D4, 0x5558CC),
               2: ((273, 242), 0x555954, 0x555A4C),

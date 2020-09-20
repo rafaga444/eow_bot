@@ -1,14 +1,15 @@
 import win32gui
 from pymem import *
-import win32com.client
-import pyautogui
+
 import keyboard
 from clicks import shiftclick, rightclick
 import move as b
 import time
+import datetime
 from monster_map import mob_map
 from eow_autoloot import loot
 
+now = datetime.datetime.now()
 
 hwndscr = win32gui.FindWindow(None, 'Epoch of Worlds')
 pm = pymem.Pymem("MUDClient.exe")
@@ -39,7 +40,6 @@ class Move:
         self.x = pm.read_int(player_x)
         self.y = pm.read_int(player_y)
 
-
     def goto2(self, x, y):
         while self.x != x or self.y != y:
             previous_coord = []
@@ -67,6 +67,10 @@ class Move:
 
                 elif self.y > y:
                     b.go_left_up()
+                    # coord_old = self.y = pm.read_int(player_y)
+                    # if self.y == coord_old:
+                    #     b.go_up()
+
                 elif self.y == y:
                     b.go_left()
             elif self.x == x:
@@ -74,6 +78,7 @@ class Move:
                     b.go_up()
                 elif self.y < y:
                     b.go_down()
+
 
 
 def record():
@@ -107,10 +112,8 @@ def record():
 
 
 def play():
-
     with open('coordinates.txt', 'r') as f:
         for xy in f:
-
             # hp = search_hp()
             # try:
             #     if hp:
@@ -132,9 +135,12 @@ def play():
             coords = xy.split(',')
             x = int(coords[0])
             y = int(coords[1])
-            print([x, y])
+            x1 = pm.read_int(player_x)
+            y1 = pm.read_int(player_y)
+            time.sleep(2)
+            print('сейчас на ',x1,y1)
+            print('пойду     ',x, y)
             player.goto2(x, y)
-
 
 
 def attack():
@@ -142,19 +148,23 @@ def attack():
     try:
         if hp:
             print(hp)
-            for i in range(hp[2]):
+            for i in range(hp[2], -1, -1):
+                print('i= ', i)
                 shiftclick(*hp[0])
-                while hp[1] > 0:
-                    hp = search_hp()
+                time_fiend_2 = hp[3]
+                while hp[2] == i:
                     print('health', hp[1])
-                hp = search_hp()
+                    hp = search_hp()
+                    if time_fiend_2 + datetime.timedelta(seconds=20) < datetime.datetime.now():
+                        shiftclick(*hp[0])
                 rightclick(*hp[0])
                 loot()
+                time.sleep(0.7)
+                hp = search_hp()
     except TypeError:
+        if pm.read_int(0x005680F8) < 800:
+
         print('nonetype')
-
-
-
 
 
 def count_mobs():
@@ -168,20 +178,26 @@ def search_hp():
     count_mobs = 0
     for coord, address in mob_map.values():
         mob_hp_percent = pm.read_int(address)
+        time_fiend = datetime.datetime.now()
         if mob_hp_percent > 0:
             for coord2, address2 in mob_map.values():
                 mob_hp_percent2 = pm.read_int(address2)
                 if mob_hp_percent2 > 0:
                     count_mobs += 1
             print(coord, mob_hp_percent, count_mobs)
-            return coord, mob_hp_percent, count_mobs
+            return coord, mob_hp_percent, count_mobs, time_fiend
 
 
 player = Move()
-#play()
-#search_hp()
+play()
+# search_hp()
+# record()
 
-while True:
-    print(pm.read_int(cur_exp))
+# while True:
+#     print(pm.read_int(cur_exp))
 
-
+#
+# x = pm.read_int(player_x)
+# y = pm.read_int(player_y)
+# print(datetime.timedelta(now.strftime("%H:%M")) - datetime.timedelta(minutes=10))
+# print(datetime.datetime.now() - datetime.timedelta(minutes=10))

@@ -1,4 +1,4 @@
-import pydirectinput as pyat
+
 from clicks import leftclick
 
 
