@@ -2,7 +2,7 @@ import win32gui
 from pymem import *
 
 import keyboard
-from clicks import shiftclick, rightclick
+from clicks import shiftclick, rightclick, escape
 import move as b
 import time
 import datetime
@@ -19,15 +19,17 @@ player_hp = 0x005680F8
 player_hp_percent = pm.read_int(0x578C20) / 10
 player_y = 0x01355EB8
 player_x = 0x0056E6C8
+player_gp = 0x568108
 cur_map = 0x51DF44
 cur_exp = 0x56810C
 current_first_bag_slot = 0x564580
 stats_window_status = 0x0051DE28  # 1 - opened 2 - closed
+description_window_status = 0x51DE44
 first_bag_slot = 0x0564604
 hota_active = 0x554D70  # 90 = active
-zombie_hp_down = 0x578DA0
-hp_up = 0x578AA0
 
+start_gold = pm.read_int(player_gp)
+start_exp = pm.read_int(cur_exp)
 print(pm.read_int(player_x), pm.read_int(player_y))
 
 
@@ -45,7 +47,10 @@ class Move:
             previous_coord = []
             self.y = pm.read_int(player_y)
             self.x = pm.read_int(player_x)
-            if search_hp():
+            if pm.read_int(0x51DE44) == 1:
+                pm.write_int(0x51DE44, 0)
+                pm.write_int(0x51DE54, 0)
+            elif search_hp():
                 attack()
             elif self.x < x:
                 if self.y < y:
@@ -112,8 +117,10 @@ def record():
 
 
 def play():
-    with open('coordinates.txt', 'r') as f:
+    with open('routes/temple_of_fire2.txt', 'r') as f:
         for xy in f:
+
+
             # hp = search_hp()
             # try:
             #     if hp:
@@ -137,14 +144,16 @@ def play():
             y = int(coords[1])
             x1 = pm.read_int(player_x)
             y1 = pm.read_int(player_y)
-            time.sleep(2)
             print('сейчас на ',x1,y1)
             print('пойду     ',x, y)
+            if keyboard.is_pressed('q'):
+                check_profit()
             player.goto2(x, y)
 
 
 def attack():
     hp = search_hp()
+    click_to_loot = (0, 0)
     try:
         if hp:
             print(hp)
@@ -154,17 +163,23 @@ def attack():
                 time_fiend_2 = hp[3]
                 while hp[2] == i:
                     print('health', hp[1])
+                    time.sleep(1)
                     hp = search_hp()
-                    if time_fiend_2 + datetime.timedelta(seconds=20) < datetime.datetime.now():
-                        shiftclick(*hp[0])
-                rightclick(*hp[0])
+                    if hp[1] > 0:
+                        click_to_loot = hp[0]
+                        print('труп', hp[0])
+                print('клик', click_to_loot)
+                rightclick(*click_to_loot)
                 loot()
-                time.sleep(0.7)
-                hp = search_hp()
-    except TypeError:
-        if pm.read_int(0x005680F8) < 800:
+                    # if time_fiend_2 + datetime.timedelta(seconds=20) < datetime.datetime.now():
+                    #     shiftclick(*hp[0])
 
+    except TypeError:
         print('nonetype')
+        print('клик', click_to_loot)
+        rightclick(*click_to_loot)
+        loot()
+        #hp = search_hp()
 
 
 def count_mobs():
@@ -187,9 +202,19 @@ def search_hp():
             print(coord, mob_hp_percent, count_mobs)
             return coord, mob_hp_percent, count_mobs, time_fiend
 
+def check_profit():
+    global start_exp, start_gold
+    pm.write_int(stats_window_status, 1)
+    escape()
+    current_exp = pm.read_int(cur_exp) - start_exp
+    current_gold = pm.read_int(player_gp) - start_gold
+    time_spent = datetime.datetime.now() - now
+    print('Всего опыта:', current_exp, '\nВсего золота:', current_gold, '\nВремя:', time_spent)
 
 player = Move()
-play()
+while not keyboard.is_pressed('q'):
+    play()
+check_profit()
 # search_hp()
 # record()
 
