@@ -2,11 +2,12 @@ import pymem
 import keyboard
 import win32api, win32con
 import time
-from clicks import double_left, escape, leftclick
+from clicks import double_left, escape, leftclick, rightclick
 
 pm = pymem.Pymem('mudclient.exe')
 current_first_bag_slot = pm.read_int(0x564580)
 # pickaxe ID = 134
+# gold iD    = 109
 # cell coordinates, item_id, quantity
 drop_field = {0: ((200, 240), 0x555654, 0x55574C),
               1: ((241, 240), 0x5557D4, 0x5558CC),
@@ -87,6 +88,46 @@ def find_pickaxe():
                 leftclick(599, 231, delay=0, amount=clicks_count)
             else:
                 print('found')
+    return pickaxe_slot
 
 
-find_pickaxe()
+def free_space():
+    space = 0
+    for cell_num, address in bag.items():
+        item_id = pm.read_int(address)
+        if item_id == 0:
+            space += 1
+    return space
+
+
+def dig():
+    slot = find_pickaxe()
+    # time.sleep(0.5)
+    if slot == 28:
+        rightclick(522, 231, delay=0)
+        leftclick(157, 151, delay=0)
+        time.sleep(7)
+    elif slot == 29:
+        rightclick(564, 229, delay=0)
+        leftclick(157, 151, delay=0)
+        time.sleep(7)
+    else:
+        rightclick(483, 233, delay=0)
+        leftclick(157, 151, delay=0)
+        time.sleep(7)
+
+
+# while not keyboard.is_pressed('q'):
+#     dig()
+
+def is_not_gold():
+    to_drop = []
+    for cell_num, address in bag.items():
+        item_id = pm.read_int(address)
+        if item_id not in (134, 109, 0):
+            to_drop.append(cell_num)
+    return to_drop
+
+def drop(drop: list):
+    pass
+

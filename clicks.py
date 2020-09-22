@@ -4,7 +4,7 @@ import win32con
 import time
 
 
-hWnd = win32gui.FindWindow(None, "Shadow Worlds")
+hWnd = win32gui.FindWindow(None, "Epoch of Worlds")
 
 
 
@@ -38,6 +38,7 @@ def escape():
     # lParam = win32api.MAKELONG(x, y)
 
     win32gui.PostMessage(hwndWindowTarget, win32con.WM_KEYDOWN, win32con.VK_ESCAPE, 1)
+    win32gui.PostMessage(hwndWindowTarget, win32con.WM_KEYUP, win32con.VK_ESCAPE, 1)
 
 
 def shiftclick(x, y, delay=0.3):
@@ -49,5 +50,13 @@ def shiftclick(x, y, delay=0.3):
     win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONDOWN, win32con.MK_SHIFT, lParam)
     win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONUP, win32con.MK_SHIFT, lParam)
     time.sleep(delay)
+
+def f8():
+    hwndWindowTarget = win32gui.FindWindow("TForm1", "SW")
+    # lParam = win32api.MAKELONG(x, y)
+    win32gui.PostMessage(hwndWindowTarget, win32con.WM_KEYDOWN, win32con.VK_F8, 1)
+    win32gui.PostMessage(hwndWindowTarget, win32con.WM_KEYUP, win32con.VK_F8, 1)
+    time.sleep(0.5)
+
 
 

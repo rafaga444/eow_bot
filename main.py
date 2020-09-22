@@ -1,8 +1,10 @@
+import traceback
+
 import win32gui
 from pymem import *
-
+import atexit
 import keyboard
-from clicks import shiftclick, rightclick, escape
+from clicks import shiftclick, rightclick, escape, f8
 import move as b
 import time
 import datetime
@@ -16,7 +18,7 @@ pm = pymem.Pymem("MUDClient.exe")
 
 player_mn = 0x005680FC
 player_hp = 0x005680F8
-player_hp_percent = pm.read_int(0x578C20) / 10
+player_hp_percent = 0x578C20
 player_y = 0x01355EB8
 player_x = 0x0056E6C8
 player_gp = 0x568108
@@ -27,6 +29,8 @@ stats_window_status = 0x0051DE28  # 1 - opened 2 - closed
 description_window_status = 0x51DE44
 first_bag_slot = 0x0564604
 hota_active = 0x554D70  # 90 = active
+hota_sec = 0x554D48  #0-90
+stamina = 0x5682B4
 
 start_gold = pm.read_int(player_gp)
 start_exp = pm.read_int(cur_exp)
@@ -47,9 +51,13 @@ class Move:
             previous_coord = []
             self.y = pm.read_int(player_y)
             self.x = pm.read_int(player_x)
-            if pm.read_int(0x51DE44) == 1:
+            if keyboard.is_pressed('q'):
+                check_profit()
+            elif pm.read_int(0x51DE44) == 1:
                 pm.write_int(0x51DE44, 0)
                 pm.write_int(0x51DE54, 0)
+            elif pm.read_int(hota_sec) == 0 and pm.read_int(player_hp_percent)/10 <= 80:
+                f8()
             elif search_hp():
                 attack()
             elif self.x < x:
@@ -146,8 +154,6 @@ def play():
             y1 = pm.read_int(player_y)
             print('сейчас на ',x1,y1)
             print('пойду     ',x, y)
-            if keyboard.is_pressed('q'):
-                check_profit()
             player.goto2(x, y)
 
 
@@ -160,7 +166,6 @@ def attack():
             for i in range(hp[2], -1, -1):
                 print('i= ', i)
                 shiftclick(*hp[0])
-                time_fiend_2 = hp[3]
                 while hp[2] == i:
                     print('health', hp[1])
                     time.sleep(1)
@@ -193,14 +198,13 @@ def search_hp():
     count_mobs = 0
     for coord, address in mob_map.values():
         mob_hp_percent = pm.read_int(address)
-        time_fiend = datetime.datetime.now()
         if mob_hp_percent > 0:
             for coord2, address2 in mob_map.values():
                 mob_hp_percent2 = pm.read_int(address2)
                 if mob_hp_percent2 > 0:
                     count_mobs += 1
             print(coord, mob_hp_percent, count_mobs)
-            return coord, mob_hp_percent, count_mobs, time_fiend
+            return coord, mob_hp_percent, count_mobs
 
 def check_profit():
     global start_exp, start_gold
@@ -211,10 +215,16 @@ def check_profit():
     time_spent = datetime.datetime.now() - now
     print('Всего опыта:', current_exp, '\nВсего золота:', current_gold, '\nВремя:', time_spent)
 
+
+
 player = Move()
+
 while not keyboard.is_pressed('q'):
     play()
+
 check_profit()
+
+
 # search_hp()
 # record()
 
