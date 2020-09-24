@@ -31,6 +31,7 @@ def double_left(x, y):
     lParam = win32api.MAKELONG(x, y)
 
     win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONDBLCLK, 1, lParam)
+    win32gui.PostMessage(hwndWindowTarget, win32con.WM_LBUTTONDBLCLK, 1, lParam)
 
 
 def escape():

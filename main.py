@@ -16,11 +16,11 @@ now = datetime.datetime.now()
 hwndscr = win32gui.FindWindow(None, 'Epoch of Worlds')
 pm = pymem.Pymem("MUDClient.exe")
 
-player_mn = 0x005680FC
-player_hp = 0x005680F8
+player_mn = 0x5680FC
+player_hp = 0x5680F8
 player_hp_percent = 0x578C20
-player_y = 0x01355EB8
-player_x = 0x0056E6C8
+player_y = 0x1355EB8
+player_x = 0x56E6C8
 player_gp = 0x568108
 cur_map = 0x51DF44
 cur_exp = 0x56810C
@@ -31,6 +31,9 @@ first_bag_slot = 0x0564604
 hota_active = 0x554D70  # 90 = active
 hota_sec = 0x554D48  #0-90
 stamina = 0x5682B4
+
+anvil_open1 = 0x51DE44
+anvil_open2 = 0x51DEB8
 
 start_gold = pm.read_int(player_gp)
 start_exp = pm.read_int(cur_exp)
@@ -51,15 +54,16 @@ class Move:
             previous_coord = []
             self.y = pm.read_int(player_y)
             self.x = pm.read_int(player_x)
-            if keyboard.is_pressed('q'):
+            if search_hp():
+                attack()
+            elif keyboard.is_pressed('q'):
                 check_profit()
             elif pm.read_int(0x51DE44) == 1:
                 pm.write_int(0x51DE44, 0)
                 pm.write_int(0x51DE54, 0)
-            elif pm.read_int(hota_sec) == 0 and pm.read_int(player_hp_percent)/10 <= 80:
-                f8()
-            elif search_hp():
-                attack()
+            # elif pm.read_int(hota_sec) == 0 and pm.read_int(player_hp) <= 1400:
+            #     f8()
+
             elif self.x < x:
                 if self.y < y:
                     b.go_right_down()
@@ -219,10 +223,10 @@ def check_profit():
 
 player = Move()
 
-while not keyboard.is_pressed('q'):
+while True:
     play()
 
-check_profit()
+
 
 
 # search_hp()
